@@ -1,5 +1,3 @@
-
-
 <?php
     /**
      * Created by PhpStorm.
@@ -118,6 +116,7 @@
                             )); ?>
                             <!--Tour Info-->
                             <!--Tour Overview-->
+                            
                             <?php echo st()->load_template('layouts/elementor/hotel/single/item/description'); ?>
                             <!--End Tour Overview-->
 

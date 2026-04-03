@@ -1,0 +1,265 @@
+<?php
+wp_enqueue_script('filter-tour');
+while (have_posts()) : the_post();
+    $post_id = get_the_ID();
+    $address = get_post_meta($post_id, 'address', true);
+    $review_rate = STReview::get_avg_rate();
+    $count_review = STReview::count_review($post_id);
+    $gallery            = get_post_meta($post_id, 'gallery', true);
+    $gallery_array      = explode(',', $gallery);
+    $tour_external = get_post_meta(get_the_ID(), 'st_tour_external_booking', true);
+    $tour_external_link = get_post_meta(get_the_ID(), 'st_tour_external_booking_link', true);
+    $booking_type = st_get_booking_option_type();
+    $tour_type = get_post_meta(get_the_ID(), 'type_tour', true); ?>
+    <div id="st-content-wrapper" class="st-style-4 st-style-elementor st-single-tour st-single-tour-<?php echo esc_attr($style_single); ?>">
+        <div class="container st-single-service-content">
+            <?php echo stt_elementorv2()->loadView('services/tour/single/item/style-2/top-infor', array(
+                'address' => $address,
+                'review_rate' => $review_rate,
+                'count_review' => $count_review,
+            )) ?>
+        </div>
+        <?php
+        echo stt_elementorv2()->loadView('components/banner');
+        ?>
+        <div class="st-content--info">
+            <div class="container st-single-service-content">
+                <div class="row">
+                    <div class="col-12 col-sm-12 col-md-12 col-lg-8">
+                    <?php echo stt_elementorv2()->loadView('services/common/single/gallery-3', array('gallery_array' => $gallery_array, 'gallery' => $gallery , 'post_id' => $post_id)) ?>
+                        <div class="st-hotel-content">
+                            <div class="hotel-target-book-mobile d-flex justify-content-between align-items-center">
+                                <div class="price-wrapper">
+                                    <div id="mobile-price">
+                                        <?php echo wp_kses(sprintf(__('From:<span class="price">%s</span>', 'traveler'), STTour::get_price_html(get_the_ID())), ['span' => ['class' => []]]) ?>
+                                    </div>
+                                    <div class="st-review-booking-form">
+                                        <div class="st-review-box-top d-flex align-items-center">
+                                            <?php
+                                            $count_review = get_comment_count($post_id)['approved'];
+                                            $avg = STReview::get_avg_rate();
+                                            for ($i = 1; $i <= 5; $i++) {
+                                                echo '<span class="stt-icon-star1' . ($i <= $avg ? '' : ' empty') . '"></span>';
+                                            }
+                                            ?>
+                                            <div class="review-score">
+                                                <?php echo esc_attr($avg); ?>
+                                            </div>
+                                            <div class="review-score-base text-center">
+                                                <span>(<?php comments_number(__('0 review', 'traveler'), __('1 review', 'traveler'), __('% reviews', 'traveler')); ?>)</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php
+                                if ($tour_external == 'off' || empty($tour_external)) {
+                                ?>
+                                    <a href="" class="btn-v2 btn-primary btn-mpopup btn-green">
+                                        <?php
+                                        if ($booking_type == 'enquire') {
+                                            echo esc_html__('Inquiry', 'traveler');
+                                        } else {
+                                            echo esc_html__('Check', 'traveler');
+                                        }
+                                        ?>
+                                    </a>
+                                <?php
+                                } else {
+                                ?>
+                                    <a href="" class="btn-v2 btn btn-mpopup"><?php echo esc_html__('Check', 'traveler') ?></a>
+                                <?php
+                                }
+                                ?>
+                            </div>
+                        </div>
+                        <div class="st-description" id="st-description">
+                            <?php
+                            if (isset($title)) {
+                                echo '<h2 class="st-heading-section">' . esc_html($title) . '</h2>';
+                            } else { ?>
+                                <h2 class="st-heading-section">
+                                    <?php
+                                    echo __('Overview', 'traveler');
+                                    ?>
+                                </h2>
+<!-- Begin People Viewing Notice -->            
+<?php
+$viewers_list = [1, 5, 3, 10, 2, 8, 20, 4, 11, 19, 6, 14, 25, 7, 16, 9];
+$booked_list = [1, 2, 3, 4, 5];
+$people_viewing = $viewers_list[array_rand($viewers_list)];
+$slots_booked = $booked_list[array_rand($booked_list)];
+$show_booked = (rand(0, 1) === 1);
+$days_advance = get_post_meta(get_the_ID(), '_days_advance', true);
+?>
+<div class="people-viewing-notice" style="display:block !important;opacity:1 !important;background:#f5f5f5;padding:12px;border:1px solid #2e7d32;margin-top:8px;font-size:14px;color:#333333;z-index:9999;font-weight:bold;border-radius:8px;">
+<strong><svg viewBox="0 0 24 24" width="16px" height="16px" style="fill:#2e7d32;vertical-align:middle;margin-right:4px;" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M11.42 11.968V6.567h1.5v6.022l-3.028 3.028-1.06-1.06zm9.357 2.925-5.417 5.416-2.89-2.89 1.06-1.06 1.83 1.829 4.356-4.356z"></path><path d="M20.41 12a8.24 8.24 0 0 0-8.128-8.239v-1.5c5.327.06 9.627 4.397 9.627 9.739q0 .135-.003.268h-1.501q.004-.135.004-.268m-8.273 8.239a8.24 8.24 0 0 1-5.46-14.38l-.978-1.137A9.72 9.72 0 0 0 2.43 12c0 5.367 4.343 9.72 9.706 9.739z"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M5.42 5.733H2.09v-1.5h4.83v4.83h-1.5z"></path></svg> <span style="color:#2e7d32;"><?php echo esc_html($people_viewing); ?></span> travelers are viewing this tour right now &bull; spaces are filling quickly</strong><br>
+<?php if ($show_booked) { ?>
+<strong><svg viewBox="0 0 24 24" width="16px" height="16px" style="fill:#2e7d32;vertical-align:middle;margin-right:4px;" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M3.23 6.645v10.71h17.54V6.644zm-1-1.5a.5.5 0 0 0-.5.5v12.71a.5.5 0 0 0 .5.5h19.54a.5.5 0 0 0 .5-.5V5.644a.5.5 0 0 0-.5-.5z"></path><path d="M2.605 8.554h18.933V12H2.605z"></path></svg> <span style="color:#2e7d32;"><?php echo esc_html($slots_booked); ?></span> just booked &bull; Book now!</strong><br>
+<?php } ?>
+<?php if (!empty($days_advance)) { ?>
+<strong><svg viewBox="0 0 24 24" width="16px" height="16px" style="fill:#2e7d32;vertical-align:middle;margin-right:4px;" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.007 2.75a.75.75 0 0 1 .748.752l-.002.748h2.512V3.5a.75.75 0 0 1 1.5 0v.75h2.472l-.002-.748a.75.75 0 1 1 1.5-.004l.002.752h4.018v17H3.245v-17h4.008l.002-.752a.75.75 0 0 1 .752-.748m-.758 3H4.745v14h14.51v-14h-2.513l.006 1.747-1.5.005-.006-1.752h-2.477V7.5h-1.5V5.75H8.749l-.004 1.752-1.5-.004zm-.004 6h5.5v5.5h-5.5zm1.5 1.5v2.5h2.5v-2.5z"></path></svg> Book ahead &bull; This is booked <span style="color:#2e7d32;"><?php echo esc_html($days_advance); ?></span> days in advance on average</strong>
+<?php } ?>
+</div><br>
+<!-- End People Viewing Notice -->
+
+<?php
+// Begin cancellation code
+
+$allow_cancel = get_post_meta(get_the_ID(), 'st_allow_cancel', true);
+
+if (!empty($allow_cancel) && ($allow_cancel === 'on' || $allow_cancel === 'yes' || $allow_cancel == 1)) {
+    echo '
+    <style>
+        .st-tooltip-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .st-tooltip-icon {
+            border: 1.5px solid #888; /* grey border */
+            background-color: transparent; /* transparent background */
+            color: #888; /* grey "i" */
+            border-radius: 50%;
+            padding: 0 7px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+            line-height: 18px;
+            text-align: center;
+            cursor: help;
+            user-select: none;
+            margin-left: 6px;
+            transition: none; /* no hover bg change */
+            position: relative;
+        }
+
+        /* Remove any native tooltip blue ? or default browser tooltip */
+        .st-tooltip-icon[title],
+        .st-tooltip-icon[title]:hover::after,
+        .st-tooltip-icon:hover::after {
+            content: none !important;
+            display: none !important;
+            pointer-events: none !important;
+        }
+
+        .st-tooltip-text {
+            visibility: hidden;
+            width: 260px;
+            background-color: #fff; /* white background */
+            color: #000; /* black text */
+            text-align: left;
+            border-radius: 6px;
+            padding: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            position: absolute;
+            z-index: 9999;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -130px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 13px;
+            pointer-events: none;
+        }
+
+        .st-tooltip-text::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #fff transparent transparent transparent; /* white arrow */
+        }
+
+        .st-tooltip-container:hover .st-tooltip-text {
+            visibility: visible;
+            opacity: 1;
+            pointer-events: auto;
+        }
+    </style>
+
+    <div class="st-cancel-note" style="margin-bottom: 15px; font-weight: bold; color: #2e8b57; display: flex; align-items: center; gap: 6px;">
+        <span style="color: #2e8b57;">🕒</span> Free cancellation available
+        <div class="st-tooltip-container">
+            <span class="st-tooltip-icon">i</span>
+            <div class="st-tooltip-text">
+Refund if cancelled within 24 hours of making the reservation 
+– minus booking and processing fee.
+            </div>
+        </div>
+    </div>';
+}
+
+// End cancellation code
+?>
+
+
+
+
+
+
+
+
+                            <?php }
+                            the_content();
+                            ?>
+                        </div>
+                        <?php echo stt_elementorv2()->loadView('services/tour/single/item/infor', array('tour_type' => $tour_type)); ?>
+                        <?php echo stt_elementorv2()->loadView('services/tour/single/item/discount'); ?>
+                        <?php echo stt_elementorv2()->loadView('services/tour/single/item/style-2/include-exclude') ?>
+                        <div class="st-program--wrapper st-program-parent">
+                            <?php echo stt_elementorv2()->loadView('services/tour/single/item/style-2/itenirary', ['post_id' => $post_id]) ?>
+                        </div>
+                        <div class="st-content--hightlight">
+                            <?php echo stt_elementorv2()->loadView('services/tour/single/item/style-2/highlights') ?>
+                        </div>
+                        <?php echo stt_elementorv2()->loadView('services/tour/single/item/style-2/faq', ['post_id' => $post_id]) ?>
+                        <div id="st-attributes">
+                            <?php echo stt_elementorv2()->loadView('services/tour/single/item/style-2/attributes', ['post_type' => 'st_tours']) ?>
+                        </div>
+						<?php echo stt_elementorv2()->loadView('services/tour/single/item/review',['post_id' => $post_id]); ?>
+                        <div class="stoped-scroll-section"></div>
+                    </div>
+                    <div class="col-12 col-sm-12 col-md-12 col-lg-4">
+                        <div class="widgets sticky-top">
+                            <div class="fixed-on-mobile st-fixed-form-booking" data-screen="992px">
+                                <div class="close-icon hide">
+                                    <?php echo TravelHelper::getNewIcon('Ico_close'); ?>
+                                </div>
+                                <?php
+                                $info_price = STTour::get_info_price();
+                                echo stt_elementorv2()->loadView('services/tour/single/item/form-book', [
+                                    'info_price' => $info_price,
+                                    'tour_external' => $tour_external,
+                                    'tour_external_link' => $tour_external_link,
+                                    'tour_type' => $tour_type,
+                                    'booking_type' => $booking_type,
+                                    'review_rate' => $review_rate,
+                                ]);
+                                ?>
+                                <?php
+                                $list_badges = get_post_meta(get_the_ID(), 'list_badges', true);
+                                if (!empty($list_badges)) {
+                                    echo st()->load_template('layouts/modern/common/single/badge', '', array('list_badges' => $list_badges));
+                                }
+                                ?>
+                                <?php echo st()->load_template('layouts/elementor/hotel/single/item/owner-info', '', array('size_avatar_custom' => 90)); ?>
+
+                                <?php echo st()->load_template('layouts/modern/common/single/information-contact'); ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="related">
+            <div class="container">
+				<?php echo stt_elementorv2()->loadView('services/tour/single/item/style-2/relate', ['post_id' => $post_id]) ?>
+            </div>
+        </div>
+    </div>
+
+<?php endwhile; ?>

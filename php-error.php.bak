@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Temporary Issue</title>
+<style>
+body { font-family: Arial; text-align:center; padding:40px; }
+.box { max-width:500px; margin:auto; padding:20px; border:1px solid #ddd; border-radius:8px; }
+button { padding:10px 20px; font-size:16px; cursor:pointer; }
+</style>
+</head>
+<body>
+<div class="box">
+<h2>Temporary Issue</h2>
+<p>Something went wrong for a moment. This is usually fixed by refreshing the page.</p>
+<button onclick="location.reload()">Refresh Page</button>
+</div>
+</body>
+</html>
